@@ -1,0 +1,19 @@
+{% load recaptcha3 %}
+<html>
+  <head>
+      {% recaptcha_init %}
+      {% recaptcha_ready action_name='homepage' %}
+  </head>
+  <body>
+    <form action="?" method="POST">
+      {% csrf_token %}
+      {{ form1 }}
+      <input type="submit" value="Submit">
+    </form>
+    <form action="?" method="POST">
+      {% csrf_token %}
+      {{ form2 }}
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

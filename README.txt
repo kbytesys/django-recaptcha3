@@ -1,0 +1,1 @@
+This integration app implements a reCAPTCHA support for Google reCAPTCHA v3.

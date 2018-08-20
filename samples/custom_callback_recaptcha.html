@@ -1,0 +1,19 @@
+{% load recaptcha3 %}
+<html>
+  <head>
+      <script>
+          function alertToken(token) {
+              alert(token);
+          }
+      </script>
+      {% recaptcha_init %}
+      {% recaptcha_ready action_name='homepage' custom_callback='alertToken' %}
+  </head>
+  <body>
+    <form action="?" method="POST">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

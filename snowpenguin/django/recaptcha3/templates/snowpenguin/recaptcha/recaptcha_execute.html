@@ -1,0 +1,8 @@
+grecaptcha.execute('{{ public_key }}', {action: '{{ action_name }}'}).then(function(token) {
+    document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function (value) {
+        value.value = token;
+    });
+    return token;
+}){% if custom_callback %}.then(function(token) {
+    window["{{ custom_callback }}"](token);
+}){% endif %}

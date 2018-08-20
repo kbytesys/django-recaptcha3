@@ -1,0 +1,5 @@
+<script>
+    grecaptcha.ready(function() {
+        {% include "snowpenguin/recaptcha/recaptcha_execute.html" with public_key=public_key action_name=action_name custom_callback=custom_callback %}
+    });
+</script>
