@@ -1,4 +1,5 @@
 language: python
+dist: trusty
 python:
 - '2.7'
 - '3.4'
@@ -7,15 +8,19 @@ python:
 install:
 - pip install tox-travis
 - python setup.py -q install
+addons:
+  sonarcloud:
+    organization: -
 script:
 - tox
+- sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_TOKEN
 deploy:
   provider: pypi
   skip_existing: true
   user: kbyte
   distributions: sdist bdist_wheel
   password:
-    secure: hSFplrwlhAbvbSuomjjxYqYXVPiBj5PDRR8wvHdUDwkpGzs2irkJmA+kOwj85IDjW+d2GaXCvxc4M56HtL4lsdXhQS+u3fSecLmJP1UcXlrzXgNXvB+7BBqlJq7Nw3g22dJudzSLCUuCBhsvIshWgyLyf2+x16PaEfB6Elk9qzAqQWfnqffL7MHkgYybs5nWSvbjhMF7z9nDnT6HOM/QKg5OaA7rJrcD5so4beqm3l03JtBpRACaplZyt+BZy      l+nHUUOuVhWCudVC6XTqxkJV/8kznVqwwyGN13FRttXzAM2ZY9fokpNOCgdvqB6V2mvwIZM9sQYOAylbbSxuxj3yWRDu3n0GFXwMZmmpylFLYM2UjNjuyn1TN5LLUfNPkqKM7Q3czPfEtzDe2HxygiNv/vwcM2DgSjID/GJ5Lu3mQSKvEbl0oyk3ZCRUAMdMecJPQyE4gGyOFa5zU4ywJfBlQiXf+xQY/xh0iWLW/VwB955uNAkzy3qfyOoXK5RRVVQje      Kyj8f/vYw7HjbsU/vXte+ruRM/x4gXgFXzHUcH4c9AWGVci7Q5b4rXEqYIQ8FX5ESXtDqToFDXVSP/ZKUXp/4sFQkBT5OLRcVTeOS0Q0azutyJLwobU+HcZjquDkb07mRA3Z6hszGvs6mautR1YjcNPgOFB+fXNtB8bpEAUVo=
+    secure: $PYPISECRET
   on:
     tags: true
     python: '3.6'
