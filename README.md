@@ -3,9 +3,7 @@
 
 This integration app implements a recaptcha field for <a href="https://developers.google.com/recaptcha/intro">Google reCaptcha v3</a>.
 
-**Warning:** this package is not suitable for production yet (also Google reCaptcha v3 is only in beta at the moment)
-
-**Warning2:** this package is **not** compatible with django-recaptcha2
+**Warning:** this package is **not** compatible with django-recaptcha2
 
 ----
 
@@ -43,7 +41,7 @@ If you have to create the apikey for the domains managed by your django project,
 You can simply create a reCaptcha enabled form with the field provided by this app:
 
 ```python
-from snowpenguin.django.recaptcha2.fields import ReCaptchaField
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
 
 class ExampleForm(forms.Form):
     [...]
@@ -180,7 +178,7 @@ os.environ['RECAPTCHA_DISABLE'] = 'True'
 
 Warning: you can use any word in place of "True", the clean function will check only if the variable exists.
 
-### Test unit with recaptcha2 disabled
+### Test unit with recaptcha3 disabled
 ```python
 import os
 import unittest
