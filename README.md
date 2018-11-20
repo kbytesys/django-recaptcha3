@@ -166,6 +166,17 @@ You can use the plain javascript, just remember to set the correct value for the
 </html>
 ```
 
+
+## Settings
+
+If you want to use recaptcha's score you need to adjust the bot score threshold.
+
+django-recaptcha3 can adjust the bot score threshold as follows. The default value for the threshold is 0.
+
+```python
+RECAPTCHA_SCORE_THRESHOLD = 0
+```
+
 ## Testing
 ### Test unit support
 You can't simulate api calls in your test, but you can disable the recaptcha field and let your test works.
