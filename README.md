@@ -174,7 +174,12 @@ If you want to use recaptcha's score you need to adjust the bot score threshold.
 django-recaptcha3 can adjust the bot score threshold as follows. The default value for the threshold is 0.
 
 ```python
-RECAPTCHA_SCORE_THRESHOLD = 0
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
+
+class ExampleForm(forms.Form):
+    [...]
+    captcha = ReCaptchaField(score_threshold=0.5)
+    [...]
 ```
 
 ## Testing

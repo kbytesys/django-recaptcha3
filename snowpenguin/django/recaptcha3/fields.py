@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ReCaptchaField(forms.CharField):
     def __init__(self, attrs=None, *args, **kwargs):
         self._private_key = kwargs.pop('private_key', settings.RECAPTCHA_PRIVATE_KEY)
-        self._score_threshold = getattr(settings, 'RECAPTCHA_SCORE_THRESHOLD', 0)
+        self._score_threshold = kwargs.pop('score_threshold', 0)
 
         if 'widget' not in kwargs:
             kwargs['widget'] = ReCaptchaHiddenInput()
@@ -52,12 +52,11 @@ class ReCaptchaField(forms.CharField):
 
         logger.debug("Recieved response from reCaptcha server: %s", json_response)
         if bool(json_response['success']):
-            if json_response['score'] > self._score_threshold:
-                return values[0]
-            else:
+            if self._score_threshold and json_response['score'] < self._score_threshold:
                 raise ValidationError(
                     _('reCaptcha score is too low. score:%s', json_response['score'])
                 )
+            return values[0]
         else:
             if 'error-codes' in json_response:
                 if 'missing-input-secret' in json_response['error-codes'] or \

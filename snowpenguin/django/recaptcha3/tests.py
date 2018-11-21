@@ -37,11 +37,10 @@ class TestRecaptchaForm(TestCase):
         }
         requests_post.return_value.json = lambda: recaptcha_response
 
-        with self.settings(RECAPTCHA_SCORE_THRESHOLD=0.7):
-            class RecaptchaTestForm(Form):
-                recaptcha = ReCaptchaField(widget=ReCaptchaHiddenInput())
-            form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
-            self.assertFalse(form.is_valid())
+        class RecaptchaTestForm(Form):
+            recaptcha = ReCaptchaField(score_threshold=0.7)
+        form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
+        self.assertFalse(form.is_valid())
 
     @mock.patch('requests.post')
     def test_validate_success_highter_score(self, requests_post):
@@ -52,11 +51,10 @@ class TestRecaptchaForm(TestCase):
         }
         requests_post.return_value.json = lambda: recaptcha_response
 
-        with self.settings(RECAPTCHA_SCORE_THRESHOLD=0.4):
-            class RecaptchaTestForm(Form):
-                recaptcha = ReCaptchaField(widget=ReCaptchaHiddenInput())
-            form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
-            self.assertTrue(form.is_valid())
+        class RecaptchaTestForm(Form):
+            recaptcha = ReCaptchaField(score_threshold=0.4)
+        form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
+        self.assertTrue(form.is_valid())
 
     @mock.patch('requests.post')
     def test_validate_success(self, requests_post):
