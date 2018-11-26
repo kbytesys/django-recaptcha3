@@ -25,12 +25,13 @@ INSTALLED_APPS = (
 )
 ```
 
-And add your reCaptcha private and public key to your django settings.py and the default action name:
+And add your reCaptcha private and public key to your django settings.py and the default action name, recaptcha score threshold:
 
 ```python
 RECAPTCHA_PRIVATE_KEY = 'your private key'
 RECAPTCHA_PUBLIC_KEY = 'your public key'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
+RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 ```
 
