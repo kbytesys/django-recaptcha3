@@ -25,12 +25,13 @@ INSTALLED_APPS = (
 )
 ```
 
-And add your reCaptcha private and public key to your django settings.py and the default action name:
+And add your reCaptcha private and public key to your django settings.py and the default action name, recaptcha score threshold:
 
 ```python
 RECAPTCHA_PRIVATE_KEY = 'your private key'
 RECAPTCHA_PUBLIC_KEY = 'your public key'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
+RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 ```
 
@@ -164,6 +165,22 @@ You can use the plain javascript, just remember to set the correct value for the
     </form>
   </body>
 </html>
+```
+
+
+## Settings
+
+If you want to use recaptcha's score you need to adjust the bot score threshold.
+
+django-recaptcha3 can adjust the bot score threshold as follows. The default value for the threshold is 0.
+
+```python
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
+
+class ExampleForm(forms.Form):
+    [...]
+    captcha = ReCaptchaField(score_threshold=0.5)
+    [...]
 ```
 
 ## Testing
