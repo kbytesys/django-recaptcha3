@@ -10,8 +10,10 @@ def recaptcha_key():
 
 
 @register.inclusion_tag('snowpenguin/recaptcha/recaptcha_init.html')
-def recaptcha_init(public_key=None):
-    return {'public_key': public_key or settings.RECAPTCHA_PUBLIC_KEY}
+def recaptcha_init(public_key=None, hl=None):
+    return {'public_key': public_key or settings.RECAPTCHA_PUBLIC_KEY,
+            'hl': hl or 'en'
+    }
 
 
 @register.inclusion_tag('snowpenguin/recaptcha/recaptcha_ready.html')

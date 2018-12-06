@@ -167,6 +167,27 @@ You can use the plain javascript, just remember to set the correct value for the
 </html>
 ```
 
+#### Custom language
+
+You can specify reCAPTCHA anchor logo Language by <a href="https://developers.google.com/recaptcha/docs/language">Language codes</a>:
+
+```django
+{% load recaptcha3 %}
+<html>
+  <head>
+      {% recaptcha_init hl='en' %}
+      {% recaptcha_ready action_name='homepage' %}
+  </head>
+  <body>
+    <form action="?" method="POST">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>
+```
+
 
 ## Settings
 
