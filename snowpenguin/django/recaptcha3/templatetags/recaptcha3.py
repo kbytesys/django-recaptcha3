@@ -11,7 +11,12 @@ def recaptcha_key():
 
 @register.inclusion_tag('snowpenguin/recaptcha/recaptcha_init.html')
 def recaptcha_init(public_key=None):
-    return {'public_key': public_key or settings.RECAPTCHA_PUBLIC_KEY}
+
+    return {
+        'public_key': public_key or settings.RECAPTCHA_PUBLIC_KEY,
+        'google_api_host': 'https://www.google.com' if not hasattr(settings, 'RECAPTCHA_FRONTEND_PROXY_HOST')
+                           else settings.RECAPTCHA_FRONTEND_PROXY_HOST
+    }
 
 
 @register.inclusion_tag('snowpenguin/recaptcha/recaptcha_ready.html')
