@@ -45,7 +45,8 @@ class ReCaptchaField(forms.CharField):
         except requests.RequestException as e:
             logger.exception(e)
             raise ValidationError(
-                _('Connection to reCaptcha server failed')
+                _('Connection to reCaptcha server failed'),
+                code='connection_failed'
             )
 
         json_response = r.json()
@@ -54,7 +55,9 @@ class ReCaptchaField(forms.CharField):
         if bool(json_response['success']):
             if self._score_threshold is not None and self._score_threshold > json_response['score']:
                 raise ValidationError(
-                    _('reCaptcha score is too low. score:%s' % json_response['score'])
+                    _('reCaptcha score is too low. score: %(score)s'),
+                    code='score',
+                    params={'score': json_response['score']},
                 )
             return values[0]
         else:
@@ -64,14 +67,17 @@ class ReCaptchaField(forms.CharField):
 
                     logger.exception('Invalid reCaptcha secret key detected')
                     raise ValidationError(
-                        _('Connection to reCaptcha server failed')
+                        _('Connection to reCaptcha server failed'),
+                        code='invalid_secret',
                     )
                 else:
                     raise ValidationError(
-                        _('reCaptcha invalid or expired, try again')
+                        _('reCaptcha invalid or expired, try again'),
+                        code='expired',
                     )
             else:
                 logger.exception('No error-codes received from Google reCaptcha server')
                 raise ValidationError(
-                    _('reCaptcha response from Google not valid, try again')
+                    _('reCaptcha response from Google not valid, try again'),
+                    code='invalid_response',
                 )
