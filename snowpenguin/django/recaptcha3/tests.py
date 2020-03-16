@@ -41,7 +41,7 @@ class TestRecaptchaForm(TestCase):
             recaptcha = ReCaptchaField(score_threshold=0.7)
         form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['recaptcha'][0], 'reCaptcha score is too low. score:0.5')
+        self.assertEqual(form.errors['recaptcha'][0], 'reCaptcha score is too low. score: 0.5')
 
     @mock.patch('requests.post')
     def test_validate_success_highter_score(self, requests_post):
