@@ -12,7 +12,8 @@ addons:
   sonarcloud:
     organization: kbytesys-github
     token:
-      secure: "$SONAR_TOKEN"
+      secure: OD/SFPI9V9+MXbBGyD28sEixy5vDtF9uWZAVQzMV4TiAbI6CstspUYWOJ7seQzBJ2hfA1Odh5oDlSZC/NNgOrUTR/5GfW3UIAXfFxQQ8rpWUhaDUGCxAi1D1mPgOQjrYzO8P01e3pDHxKAaD+YfUJ4LQ8yI0+/HxkbMp8O8ewkCoKAWLzmKTOHXzHTgnFUgD/rZgxB3/3FSO7BokeCzprdiSJPByMLGb/fqYN6zbQJm0lA1/MaFjYfhsq1+WL0GUr3GZ5e07xzY7CFAnhXZogerXv6kwCDnotdKm19BJiEbFHfSDmXJk1UwH+7BdNnDPdwmAUjvc63BfHUZxDefg+/3v4bx1BQnpQ7RhBNo9wwVry0BH2x3tk3KEQcuk9JSKymbGugOL/vh+9xhzdMtwIKQahecV9DnEuF6Of58uXCP968nwjUzsYEJi01QKryzB6kGUC8YL07FxH0Z3MKOf/zAJFYmhiCg6zcHwRV8fYBdfEad1qnPz/SSbpEyIsu7GWpWJZn7v3NVCVqlPOi5/jj7OOQ/3MBLLQc9aAQ0uVGGtw/R3lIQbG8tbIWRWvUT0o50L+0XjW0HmYzVsrxEexeYtcT0Buien1Wc5D+/goooXPd38DL0hplZe2Sma01p3Vr2g0c5iD+iHLYzZNSExg8FYCuEtV29bUgcPwgI5NZ4=
+
 script:
 - tox
 - sonar-scanner
