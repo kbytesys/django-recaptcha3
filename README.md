@@ -61,7 +61,7 @@ You can use some template tags to simplify the reCaptcha adoption:
  
 * recaptcha_init: add the script tag for reCaptcha api. You have to put this tag somewhere in your "head" element
 * recaptcha_ready: call the execute function when the api script is loaded
-* recaptcha_execute: start the reCaptcha check and set the token from the api in your django forms
+* recaptcha_execute: start the reCaptcha check and set the token from the api in your django forms. Token is valid for 120s, after this time it is automatically regenerated. 
 * recaptcha_key: if you want to use reCaptcha manually in your template, you will need the sitekey (a.k.a. public api key).
   This tag returns a string with the configured public key.
   
@@ -151,12 +151,16 @@ You can use the plain javascript, just remember to set the correct value for the
       <script src="https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key"></script>
       <script>
         grecaptcha.ready(function() {
-          grecaptcha.execute('reCAPTCHA_site_key', {action: 'homepage'}).then(function(token) {
-            document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function (value) {
-                value.value = token;
-            });
-            return token;         
-          });
+          var grecaptcha_execute = function(){
+            grecaptcha.execute('reCAPTCHA_site_key', {action: 'homepage'}).then(function(token) {
+              document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function (value) {
+                  value.value = token;
+              });
+              return token;
+            })
+          };
+          grecaptcha_execute()
+          setInterval(grecaptcha_execute, 120000);
         });
       </script>
   </head>

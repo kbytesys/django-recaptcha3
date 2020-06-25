@@ -3,12 +3,16 @@
       <script src="https://www.google.com/recaptcha/api.js?render=reCAPTCHA_site_key"></script>
       <script>
         grecaptcha.ready(function() {
-          grecaptcha.execute('reCAPTCHA_site_key', {action: 'homepage'}).then(function(token) {
-            document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function (value) {
-                value.value = token;
-            });
-            return token;
-          });
+          var grecaptcha_execute = function(){
+            grecaptcha.execute('reCAPTCHA_site_key', {action: 'homepage'}).then(function(token) {
+              document.querySelectorAll('input.django-recaptcha-hidden-field').forEach(function (value) {
+                  value.value = token;
+              });
+              return token;
+            })
+          };
+          grecaptcha_execute()
+          setInterval(grecaptcha_execute, 120000);
         });
       </script>
   </head>
