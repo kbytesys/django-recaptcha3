@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 
 class ReCaptchaField(forms.CharField):
     def __init__(self, attrs=None, *args, **kwargs):
-        self._private_key = kwargs.pop('private_key', settings.RECAPTCHA_PRIVATE_KEY)
-        self._score_threshold = kwargs.pop('score_threshold', settings.RECAPTCHA_SCORE_THRESHOLD)
+        if os.environ.get('RECAPTCHA_DISABLE', None) is None:
+            self._private_key = kwargs.pop('private_key', settings.RECAPTCHA_PRIVATE_KEY)
+            self._score_threshold = kwargs.pop('score_threshold', settings.RECAPTCHA_SCORE_THRESHOLD)
 
         if 'widget' not in kwargs:
             kwargs['widget'] = ReCaptchaHiddenInput()
