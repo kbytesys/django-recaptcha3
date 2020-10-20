@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 
-version = '0.2.0'
+version = '0.4.0'
 
 
 setup(
