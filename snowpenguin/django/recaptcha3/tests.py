@@ -17,6 +17,7 @@ class TestRecaptchaForm(TestCase):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
         form = RecaptchaTestForm({})
         self.assertTrue(form.is_valid())
+        self.assertEquals(form.recaptcha.score, 1.0)
         del os.environ['RECAPTCHA_DISABLE']
 
     @mock.patch('requests.post')
@@ -48,7 +49,9 @@ class TestRecaptchaForm(TestCase):
 
         recaptcha_response = {
             'success': True,
-            'score': 0.7
+            'score': 0.7,
+            'hostname': 'example.com',
+            'action': 'click'
         }
         requests_post.return_value.json = lambda: recaptcha_response
 
@@ -56,6 +59,9 @@ class TestRecaptchaForm(TestCase):
             recaptcha = ReCaptchaField(score_threshold=0.4)
         form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
         self.assertTrue(form.is_valid())
+        self.assertEquals(form.recaptcha.score, 0.7)
+        self.assertEquals(form.recaptcha.hostname, 'example.com')
+        self.assertEquals(form.recaptcha.action, 'click')
 
     @mock.patch('requests.post')
     def test_settings_score_threshold(self, requests_post):
