@@ -15,9 +15,16 @@ class RecaptchaTestForm(Form):
 class TestRecaptchaForm(TestCase):
     def test_dummy_validation(self):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
-        form = RecaptchaTestForm({})
+        form = RecaptchaTestForm()
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.recaptcha.score, 1.0)
+        self.assertEquals(form.recaptcha.score, 0.5)
+        del os.environ['RECAPTCHA_DISABLE']
+
+    def test_dummy_validation_canfail(self):
+        os.environ['RECAPTCHA_DISABLE'] = 'True'
+        form = RecaptchaTestForm({score_threshold=0.7})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form.errors['recaptcha'][0], 'reCaptcha score is too low. score: 0.5')
         del os.environ['RECAPTCHA_DISABLE']
 
     @mock.patch('requests.post')

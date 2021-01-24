@@ -25,40 +25,39 @@ class ReCaptchaField(forms.CharField):
         super(ReCaptchaField, self).__init__(*args, **kwargs)
 
     def clean(self, values):
-
-        # Disable the check if we run a test unit
-        if os.environ.get('RECAPTCHA_DISABLE', None) is not None:
-            return {
-                "success": True,
-                "score": 1.0,
-                "action": "",
-                "challenge_ts": "yyyy-MM-dd'T'HH:mm:ssZZ",
-                "hostname": "",
-            }
+        # Mock response if we run disabled
+        json_response = {
+            'success': True,
+            'score': 0.5,
+            'action': 'homepage',
+            'challenge_ts': '2021-01-24T20:00:42Z',
+            'hostname': 'localhost',
+        }
 
         super(ReCaptchaField, self).clean(values[0])
         response_token = values[0]
 
-        try:
-            r = requests.post(
-                'https://www.google.com/recaptcha/api/siteverify',
-                {
-                    'secret': self._private_key,
-                    'response': response_token
-                },
-                timeout=5
-            )
-            r.raise_for_status()
-        except requests.RequestException as e:
-            logger.exception(e)
-            raise ValidationError(
-                _('Connection to reCaptcha server failed'),
-                code='connection_failed'
-            )
+        if os.environ.get('RECAPTCHA_DISABLE', None) is None:
+            try:
+                r = requests.post(
+                    'https://www.google.com/recaptcha/api/siteverify',
+                    {
+                        'secret': self._private_key,
+                        'response': response_token
+                    },
+                    timeout=5
+                )
+                r.raise_for_status()
+            except requests.RequestException as e:
+                logger.exception(e)
+                raise ValidationError(
+                    _('Connection to reCaptcha server failed'),
+                    code='connection_failed'
+                )
 
-        json_response = r.json()
+            json_response = r.json()
+            logger.debug("Recieved response from reCaptcha server: %s", json_response)
 
-        logger.debug("Recieved response from reCaptcha server: %s", json_response)
         if bool(json_response['success']):
             if self._score_threshold is not None and self._score_threshold > json_response['score']:
                 raise ValidationError(
