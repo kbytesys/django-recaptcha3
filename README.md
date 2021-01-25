@@ -40,7 +40,7 @@ RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 If you have to create the apikey for the domains managed by your django project, you can visit this <a href="https://www.google.com/recaptcha/admin">website</a>.
 
-## Usage 
+## Usage
 ### Form and Widget
 You can simply create a reCaptcha enabled form with the field provided by this app:
 
@@ -53,18 +53,44 @@ class ExampleForm(forms.Form):
     [...]
 ```
 
-You can set the private key on the "private_key" argument of the field contructor if you want to override the one inside
-your configuration.
+Form validation of the ReCaptchaField causes us to verify the token returned from the client against the ReCaptcha servers and populates a dictionary containing the `score`, `action`, `hostname`, and `challenge_ts` fields as the form fields `cleaned_data`:
+
+```python
+    def formview(request):
+        if request.method == "POST":
+            form = ExampleForm(request.POST)
+            if form.is_valid():
+              captcha_score = form.cleaned_data['captcha'].get('score')
+```
+
+If a communication problem occurs, the token supplied by the client is invalid or has expired then a ValidationError is raised.
+
+## Automatic Enforcement
+
+If you want low scores to cause a ValidationError, pass an appropriate `score_threshold` to the `ReCaptchaField`, or set the configuration variable settings.RECAPTCHA_SCORE_THRESHOLD.
+
+The default value for the threshold is 0.0, which allows all successful capture responses through for you to later check the value of `score`.
+
+```python
+from snowpenguin.django.recaptcha3.fields import ReCaptchaField
+
+class ExampleForm(forms.Form):
+    [...]
+    captcha = ReCaptchaField(score_threshold=0.5)
+    [...]
+```
+
+You can also set the private key on the "private_key" argument of the ReCaptchaField contructor if you want to override the one inside your configuration.
 
 ### Templating
 You can use some template tags to simplify the reCaptcha adoption:
- 
+
 * recaptcha_init: add the script tag for reCaptcha api. You have to put this tag somewhere in your "head" element
 * recaptcha_ready: call the execute function when the api script is loaded
-* recaptcha_execute: start the reCaptcha check and set the token from the api in your django forms. Token is valid for 120s, after this time it is automatically regenerated. 
+* recaptcha_execute: start the reCaptcha check and set the token from the api in your django forms. Token is valid for 120s, after this time it is automatically regenerated.
 * recaptcha_key: if you want to use reCaptcha manually in your template, you will need the sitekey (a.k.a. public api key).
   This tag returns a string with the configured public key.
-  
+
 You can use the form as usual.
 
 ### Samples
@@ -175,32 +201,19 @@ You can use the plain javascript, just remember to set the correct value for the
 ```
 
 
-## Settings
-
-If you want to use recaptcha's score you need to adjust the bot score threshold.
-
-django-recaptcha3 can adjust the bot score threshold as follows. The default value for the threshold is 0.
-
-```python
-from snowpenguin.django.recaptcha3.fields import ReCaptchaField
-
-class ExampleForm(forms.Form):
-    [...]
-    captcha = ReCaptchaField(score_threshold=0.5)
-    [...]
-```
-
 ## Testing
 ### Test unit support
-You can't simulate api calls in your test, but you can disable the recaptcha field and let your test works.
-
-Just set the RECAPTCHA_DISABLE env variable in your test:
+You can disable recaptcha field validation in unit tests by setting the RECAPTCHA_DISABLE env variable. This will skip the external call to Recaptca servers, returning a valid field with no data.
 
 ```python
 os.environ['RECAPTCHA_DISABLE'] = 'True'
 ```
+You can use any word in place of "True", the clean function will check only if the variable exists.
 
-Warning: you can use any word in place of "True", the clean function will check only if the variable exists.
+If you set `RECAPTCHA_DISABLE` to be valid json, it will be interpreted as a mock capatcha server response allowing you to mock score/hostname/action as required:
+```python
+os.environ['RECAPTCHA_DISABLE'] = json.dumps({'score': 0.4, 'hostname': 'localhost', 'action': 'homepage'})
+```
 
 ### Test unit with recaptcha3 disabled
 ```python

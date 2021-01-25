@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -25,19 +26,14 @@ class ReCaptchaField(forms.CharField):
         super(ReCaptchaField, self).__init__(*args, **kwargs)
 
     def clean(self, values):
-
-        # Disable the check if we run a test unit
+        # Disable the check (and allow empty field value) if we run in a unittest
         if os.environ.get('RECAPTCHA_DISABLE', None) is not None:
-            return {
-                "success": True,
-                "score": 1.0,
-                "action": "",
-                "challenge_ts": "yyyy-MM-dd'T'HH:mm:ssZZ",
-                "hostname": "",
-            }
+            try:
+                return json.loads(os.environ.get('RECAPTCHA_DISABLE', None))
+            except:
+                return {}
 
-        super(ReCaptchaField, self).clean(values[0])
-        response_token = values[0]
+        response_token = super(ReCaptchaField, self).clean(values)
 
         try:
             r = requests.post(
@@ -57,8 +53,8 @@ class ReCaptchaField(forms.CharField):
             )
 
         json_response = r.json()
-
         logger.debug("Recieved response from reCaptcha server: %s", json_response)
+
         if bool(json_response['success']):
             if self._score_threshold is not None and self._score_threshold > json_response['score']:
                 raise ValidationError(

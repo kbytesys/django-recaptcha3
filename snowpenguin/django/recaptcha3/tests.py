@@ -1,3 +1,4 @@
+import json
 import os
 import mock
 
@@ -15,10 +16,22 @@ class RecaptchaTestForm(Form):
 class TestRecaptchaForm(TestCase):
     def test_dummy_validation(self):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
+
+        # form should validate without a 'g-recaptcha-response'
         form = RecaptchaTestForm({})
-        self.assertTrue(form.is_valid())
-        self.assertEquals(form.recaptcha.score, 1.0)
+        s = self.assertTrue(form.is_valid())
+        # NOTE: no mocked response is returned
+        self.assertEqual(form.cleaned_data['recaptcha'], {})
         del os.environ['RECAPTCHA_DISABLE']
+
+    def test_dummy_validation_canfail(self):
+        os.environ['RECAPTCHA_DISABLE'] = json.dumps({'score': 0.4, 'hostname': 'localhost', 'action': 'homepage'})
+        form = RecaptchaTestForm({})
+        # NOTE: score_threshold validation is not performed when disabled
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['recaptcha'].get('score'), 0.4)
+        self.assertEqual(form.cleaned_data['recaptcha'].get('hostname'), 'localhost')
+        self.assertEqual(form.cleaned_data['recaptcha'].get('action'), 'homepage')
 
     @mock.patch('requests.post')
     def test_validate_error_invalid_token(self, requests_post):
@@ -59,9 +72,9 @@ class TestRecaptchaForm(TestCase):
             recaptcha = ReCaptchaField(score_threshold=0.4)
         form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.recaptcha.score, 0.7)
-        self.assertEquals(form.recaptcha.hostname, 'example.com')
-        self.assertEquals(form.recaptcha.action, 'click')
+        self.assertEqual(form.cleaned_data['recaptcha'].get('score'), 0.7)
+        self.assertEqual(form.cleaned_data['recaptcha'].get('hostname'), 'example.com')
+        self.assertEqual(form.cleaned_data['recaptcha'].get('action'), 'click')
 
     @mock.patch('requests.post')
     def test_settings_score_threshold(self, requests_post):
