@@ -1,21 +1,21 @@
 # Django reCaptcha v3 [![Build Status](https://travis-ci.org/kbytesys/django-recaptcha3.svg?branch=master)](https://travis-ci.org/kbytesys/django-recaptcha2)
 ----
 
-This integration app implements a recaptcha field for <a href="https://developers.google.com/recaptcha/intro">Google reCaptcha v3</a>.
+这个集成应用在Django上为 <a href="https://developers.google.com/recaptcha/intro">Google reCaptcha v3</a> 实现了一个 recaptcha 字段。 
 
-**Warning:** this package is **not** compatible with django-recaptcha2
+**警告：** 此软件包与 django-recaptcha2 **不兼容**
 
 ----
 
-## How to install
+## 如何安装
 
-Install the required package from pip (or take the source and install it by yourself):
+通过 pip 安装所需的软件包 （或下载源码自行安装）：
 
 ```bash
 pip install django-recaptcha3
 ```
 
-Then add django-recaptcha3 to your installed apps:
+然后将 django-recaptcha3 添加到你 Django 项目配置文件的 installed apps 中：
 
 ```python
 INSTALLED_APPS = (
@@ -25,24 +25,24 @@ INSTALLED_APPS = (
 )
 ```
 
-And add your reCaptcha private and public key to your django settings.py and the default action name, recaptcha score threshold:
+并将您的 reCaptcha 私钥和公钥添加到你 Django 项目的 settings.py 中并设置 RECAPTCHA_DEFAULT_ACTION （recaptcha默认操作名）和 RECAPTCHA_SCORE_THRESHOLD （recaptcha分数阈值）：
 
 ```python
 RECAPTCHA_PRIVATE_KEY = 'your private key'
 RECAPTCHA_PUBLIC_KEY = 'your public key'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
-# If you require reCaptcha to be loaded from somewhere other than https://google.com
-# (e.g. to bypass firewall restrictions), you can specify what proxy to use.
+# 如果您需要从其它地方加载 reCaptcha，而不是 https://google.com
+# （比如：绕过防火墙限制）， 你可以指定要使用的代理。
 # RECAPTCHA_FRONTEND_PROXY_HOST = 'https://recaptcha.net'
 
 ```
 
-If you have to create the apikey for the domains managed by your django project, you can visit this <a href="https://www.google.com/recaptcha/admin">website</a>.
+如果你需要为你的 django 项目所用到的的域名创建 apikey ，则可以访问此<a href="https://www.google.com/recaptcha/admin">网站</a>。
 
-## Usage 
-### Form and Widget
-You can simply create a reCaptcha enabled form with the field provided by this app:
+## 用法 
+### 表单和控件
+您可以使用此应用程序提供的字段便捷地创建一个包含 reCaptcha 的表单：
 
 ```python
 from snowpenguin.django.recaptcha3.fields import ReCaptchaField
@@ -53,24 +53,22 @@ class ExampleForm(forms.Form):
     [...]
 ```
 
-You can set the private key on the "private_key" argument of the field contructor if you want to override the one inside
-your configuration.
+如果你不想用 settings.py 中设置的私钥，可以在字段中添加 "private_key" 参数来指定私钥。
 
-### Templating
-You can use some template tags to simplify the reCaptcha adoption:
+### 使用模板
+您可以使用一些模板标签来简化 reCaptcha 的使用：
  
-* recaptcha_init: add the script tag for reCaptcha api. You have to put this tag somewhere in your "head" element
-* recaptcha_ready: call the execute function when the api script is loaded
-* recaptcha_execute: start the reCaptcha check and set the token from the api in your django forms. Token is valid for 120s, after this time it is automatically regenerated. 
-* recaptcha_key: if you want to use reCaptcha manually in your template, you will need the sitekey (a.k.a. public api key).
-  This tag returns a string with the configured public key.
+* recaptcha_init: ：为 reCaptcha api 添加 script 标签，您必须将此标签放在 "head" 元素中的某个位置
+* recaptcha_ready: ：api script 加载完毕时执行函数
+* recaptcha_execute: 启动 reCaptcha 检查，并从 django forms 中的 api 设置 token 。 token 有效时间为120秒，此时间过后会自动重新生成。 
+* recaptcha_key: 如果要在模板中手动使用 reCaptcha 而不通过 forms ，则需要 sitekey（又名 public api key）。此标签将返回带有配置公钥的字符串。
   
-You can use the form as usual.
+您可以照常使用该表单。
 
-### Samples
+### 示例
 #### Simple
 
-Just create a form with the reCaptcha field and follow this template example:
+只需使用 reCaptcha 字段创建一个表单，然后遵循以下模板示例：
 
 ```django
 {% load recaptcha3 %}
@@ -91,7 +89,7 @@ Just create a form with the reCaptcha field and follow this template example:
 
 #### Custom callback
 
-The callback can be used to allow to use the token received from the api in ajax calls or whatever
+The callback 可用于允许通过 ajax calls 或其他方式使用从 api 获得的 token 
 
 ```django
 {% load recaptcha3 %}
@@ -108,7 +106,7 @@ The callback can be used to allow to use the token received from the api in ajax
   <body>
     <form action="?" method="POST">
       {% csrf_token %}
-      {{ form }}
+      {{ form }} // 表单中的 reCaptcha 字段
       <input type="submit" value="Submit">
     </form>
   </body>
@@ -117,7 +115,7 @@ The callback can be used to allow to use the token received from the api in ajax
 
 #### Multiple render example
 
-You can render multiple reCaptcha without any extra effort:
+不需要额外的设置您便可以渲染多个 reCaptcha ：
 
 ```django
 {% load recaptcha3 %}
@@ -129,12 +127,12 @@ You can render multiple reCaptcha without any extra effort:
   <body>
     <form action="?" method="POST">
       {% csrf_token %}
-      {{ form1 }}
+      {{ form1 }} // 表单1中的 reCaptcha 字段
       <input type="submit" value="Submit">
     </form>
     <form action="?" method="POST">
       {% csrf_token %}
-      {{ form2 }}
+      {{ form2 }} // 表单2中的 reCaptcha 字段
       <input type="submit" value="Submit">
     </form>
   </body>
@@ -143,7 +141,7 @@ You can render multiple reCaptcha without any extra effort:
 
 #### Bare metal!
 
-You can use the plain javascript, just remember to set the correct value for the hidden field in the form
+您可以直接使用 javascript ，只需记得为表单中的隐藏字段设置正确的值
 
 ```django
 <html>
@@ -175,11 +173,13 @@ You can use the plain javascript, just remember to set the correct value for the
 ```
 
 
-## Settings
+## 设置
 
-If you want to use recaptcha's score you need to adjust the bot score threshold.
+如果要设置 recaptcha 的 score ，则需要调整 bot score 阈值。
 
-django-recaptcha3 can adjust the bot score threshold as follows. The default value for the threshold is 0.
+django-recaptcha3 可以按照下方示例调整 bot score 阈值。阈值的取值区间为 0~1，默认值为 0。
+
+1 表示有极大可能是人类，0 则表示很可能是机器人，当用户访问时被评分的值小于您设置的值时用户将被拦截，谷歌建议设置 0.5。
 
 ```python
 from snowpenguin.django.recaptcha3.fields import ReCaptchaField
@@ -190,17 +190,17 @@ class ExampleForm(forms.Form):
     [...]
 ```
 
-## Testing
+## 测试
 ### Test unit support
-You can't simulate api calls in your test, but you can disable the recaptcha field and let your test works.
+您无法在测试中模拟 api 调用，但是可以禁用 recaptcha 字段来进行测试工作。
 
-Just set the RECAPTCHA_DISABLE env variable in your test:
+只需在测试中设置 RECAPTCHA_DISABLE env 变量即可：
 
 ```python
 os.environ['RECAPTCHA_DISABLE'] = 'True'
 ```
 
-Warning: you can use any word in place of "True", the clean function will check only if the variable exists.
+警告：您可以使用任何单词代替 "True" ，clean 函数将仅检查变量是否存在。
 
 ### Test unit with recaptcha3 disabled
 ```python
