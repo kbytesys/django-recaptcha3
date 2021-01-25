@@ -210,7 +210,7 @@ os.environ['RECAPTCHA_DISABLE'] = 'True'
 ```
 You can use any word in place of "True", the clean function will check only if the variable exists.
 
-If you set `RECAPTCHA_DISABLE` to be valid json, it will be interpreted as a mock capatcha server response allowing you to mock score/hostname/action as required:
+If you set `RECAPTCHA_DISABLE` to be valid json, it will be interpreted as a mock captcha server response allowing you to mock score/hostname/action as required:
 ```python
 os.environ['RECAPTCHA_DISABLE'] = json.dumps({'score': 0.4, 'hostname': 'localhost', 'action': 'homepage'})
 ```
