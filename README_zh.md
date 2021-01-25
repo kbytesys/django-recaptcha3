@@ -33,7 +33,7 @@ RECAPTCHA_PUBLIC_KEY = 'your public key'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
 # 如果您需要从其它地方加载 reCaptcha，而不是 https://google.com
-# （比如：绕过防火墙限制）， 你可以指定要使用的代理，此处设置仅会修改前端加载 reCaptcha。
+# （比如：绕过防火墙限制）， 你可以通过以下设置指定要使用的代理，但此设置仅会修改前端加载 reCaptcha 的途径。
 # RECAPTCHA_FRONTEND_PROXY_HOST = 'https://recaptcha.net'
 
 ```
@@ -47,7 +47,7 @@ RECAPTCHA_SCORE_THRESHOLD = 0.5
 ```python
         try:
             r = requests.post(
-                'https://www.google.com/recaptcha/api/siteverify', // https://www.recaptcha.net/recaptcha/api/siteverify
+                'https://www.google.com/recaptcha/api/siteverify', // 此处域名改为 www.recaptcha.net
                 {
                     'secret': self._private_key,
                     'response': response_token
