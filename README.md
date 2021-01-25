@@ -203,7 +203,7 @@ You can use the plain javascript, just remember to set the correct value for the
 
 ## Testing
 ### Test unit support
-You can disable recaptcha field validation in unit tests by setting the RECAPTCHA_DISABLE env variable. This will fake the external call to Recaptca servers and return a fixed score of 0.5.
+You can disable recaptcha field validation in unit tests by setting the RECAPTCHA_DISABLE env variable. This will fake the external call to Recaptca servers and return a fixed score of 0.6.
 
 ```python
 os.environ['RECAPTCHA_DISABLE'] = 'True'

@@ -15,16 +15,18 @@ class RecaptchaTestForm(Form):
 class TestRecaptchaForm(TestCase):
     def test_dummy_validation(self):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
-        form = RecaptchaTestForm()
+        form = RecaptchaTestForm({})
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.recaptcha.score, 0.5)
+        self.assertEqual(form.cleaned_data['recaptcha']['score'], 0.6)
         del os.environ['RECAPTCHA_DISABLE']
 
     def test_dummy_validation_canfail(self):
         os.environ['RECAPTCHA_DISABLE'] = 'True'
-        form = RecaptchaTestForm({score_threshold=0.7})
+        class RecaptchaTestForm(Form):
+            recaptcha = ReCaptchaField(score_threshold=0.7)
+        form = RecaptchaTestForm({})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['recaptcha'][0], 'reCaptcha score is too low. score: 0.5')
+        self.assertEqual(form.errors['recaptcha'][0], 'reCaptcha score is too low. score: 0.6')
         del os.environ['RECAPTCHA_DISABLE']
 
     @mock.patch('requests.post')
@@ -66,9 +68,9 @@ class TestRecaptchaForm(TestCase):
             recaptcha = ReCaptchaField(score_threshold=0.4)
         form = RecaptchaTestForm({"g-recaptcha-response": "dummy token"})
         self.assertTrue(form.is_valid())
-        self.assertEquals(form.recaptcha.score, 0.7)
-        self.assertEquals(form.recaptcha.hostname, 'example.com')
-        self.assertEquals(form.recaptcha.action, 'click')
+        self.assertEqual(form.cleaned_data['recaptcha']['score'], 0.7)
+        self.assertEqual(form.cleaned_data['recaptcha']['hostname'], 'example.com')
+        self.assertEqual(form.cleaned_data['recaptcha']['action'], 'click')
 
     @mock.patch('requests.post')
     def test_settings_score_threshold(self, requests_post):

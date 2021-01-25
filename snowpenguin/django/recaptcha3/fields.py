@@ -15,9 +15,13 @@ logger = logging.getLogger(__name__)
 
 class ReCaptchaField(forms.CharField):
     def __init__(self, attrs=None, *args, **kwargs):
-        if os.environ.get('RECAPTCHA_DISABLE', None) is None:
-            self._private_key = kwargs.pop('private_key', settings.RECAPTCHA_PRIVATE_KEY)
-            self._score_threshold = kwargs.pop('score_threshold', settings.RECAPTCHA_SCORE_THRESHOLD)
+        # always pop our arguments otherwise the superclass will fail
+        self._private_key = kwargs.pop('private_key', getattr(settings, 'RECAPTCHA_PRIVATE_KEY', None))
+        self._score_threshold = kwargs.pop('score_threshold', getattr(settings, 'RECAPTCHA_SCORE_THRESHOLD', None))
+
+        # _private_key still unconfigured? Raise AttributeError
+        if os.environ.get('RECAPTCHA_DISABLE', None) is None and not self._private_key:
+            settings.RECAPTCHA_PRIVATE_KEY
 
         if 'widget' not in kwargs:
             kwargs['widget'] = ReCaptchaHiddenInput()
@@ -28,16 +32,15 @@ class ReCaptchaField(forms.CharField):
         # Mock response if we run disabled
         json_response = {
             'success': True,
-            'score': 0.5,
+            'score': 0.6,
             'action': 'homepage',
             'challenge_ts': '2021-01-24T20:00:42Z',
             'hostname': 'localhost',
         }
 
-        super(ReCaptchaField, self).clean(values[0])
-        response_token = values[0]
-
         if os.environ.get('RECAPTCHA_DISABLE', None) is None:
+            response_token = super(ReCaptchaField, self).clean(values)
+
             try:
                 r = requests.post(
                     'https://www.google.com/recaptcha/api/siteverify',
