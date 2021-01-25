@@ -33,10 +33,30 @@ RECAPTCHA_PUBLIC_KEY = 'your public key'
 RECAPTCHA_DEFAULT_ACTION = 'generic'
 RECAPTCHA_SCORE_THRESHOLD = 0.5
 # 如果您需要从其它地方加载 reCaptcha，而不是 https://google.com
-# （比如：绕过防火墙限制）， 你可以指定要使用的代理。
+# （比如：绕过防火墙限制）， 你可以指定要使用的代理，此处设置仅会修改前端加载 reCaptcha。
 # RECAPTCHA_FRONTEND_PROXY_HOST = 'https://recaptcha.net'
 
 ```
+
+**如果你的服务器在国内，则还需要修改 django-recaptcha3 的源码：**
+
+      1. 请先 pip uninstall django-recaptcha3 进行卸载， 然后下载 release 中的源码压缩包。
+  
+      2. 修改 django-recaptcha3-master\snowpenguin\django\recaptcha3\fields.py#38 :
+  
+```python
+        try:
+            r = requests.post(
+                'https://www.google.com/recaptcha/api/siteverify', // https://www.recaptcha.net/recaptcha/api/siteverify
+                {
+                    'secret': self._private_key,
+                    'response': response_token
+                },
+                timeout=5
+            )
+```
+
+      3. 在 django-recaptcha3-master 目录下执行 pip install . 。
 
 如果需要为您的 django 项目所用到的的域名创建 apikey ，则可以访问此<a href="https://www.google.com/recaptcha/admin">网站</a>。
 
