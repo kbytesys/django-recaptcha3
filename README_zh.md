@@ -15,7 +15,7 @@
 pip install django-recaptcha3
 ```
 
-然后将 django-recaptcha3 添加到你 Django 项目配置文件的 installed apps 中：
+然后将 django-recaptcha3 添加到您 Django 项目配置文件的 installed apps 中：
 
 ```python
 INSTALLED_APPS = (
@@ -25,7 +25,7 @@ INSTALLED_APPS = (
 )
 ```
 
-并将您的 reCaptcha 私钥和公钥添加到你 Django 项目的 settings.py 中并设置 RECAPTCHA_DEFAULT_ACTION （recaptcha默认操作名）和 RECAPTCHA_SCORE_THRESHOLD （recaptcha分数阈值）：
+并将您的 reCaptcha 私钥和公钥添加到您 Django 项目的 settings.py 中并设置 RECAPTCHA_DEFAULT_ACTION （recaptcha默认操作名）和 RECAPTCHA_SCORE_THRESHOLD （recaptcha分数阈值）：
 
 ```python
 RECAPTCHA_PRIVATE_KEY = 'your private key'
@@ -38,7 +38,7 @@ RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 ```
 
-如果你需要为你的 django 项目所用到的的域名创建 apikey ，则可以访问此<a href="https://www.google.com/recaptcha/admin">网站</a>。
+如果需要为您的 django 项目所用到的的域名创建 apikey ，则可以访问此<a href="https://www.google.com/recaptcha/admin">网站</a>。
 
 ## 用法 
 ### 表单和控件
@@ -53,7 +53,7 @@ class ExampleForm(forms.Form):
     [...]
 ```
 
-如果你不想用 settings.py 中设置的私钥，可以在字段中添加 "private_key" 参数来指定私钥。
+如果您不想用 settings.py 中设置的私钥，可以在字段中添加 "private_key" 参数来指定私钥。
 
 ### 使用模板
 您可以使用一些模板标签来简化 reCaptcha 的使用：
