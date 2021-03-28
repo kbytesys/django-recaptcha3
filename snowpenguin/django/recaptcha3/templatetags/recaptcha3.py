@@ -16,6 +16,7 @@ def recaptcha_init(public_key=None):
 
     return {
         'public_key': public_key or settings.RECAPTCHA_PUBLIC_KEY,
+        'language': settings.RECAPTCHA_LANGUAGE,
         'google_api_host': 'https://www.google.com' if not hasattr(settings, 'RECAPTCHA_FRONTEND_PROXY_HOST')
                            else settings.RECAPTCHA_FRONTEND_PROXY_HOST
     }
