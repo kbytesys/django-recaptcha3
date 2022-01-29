@@ -32,6 +32,7 @@ class TestRecaptchaForm(TestCase):
         self.assertEqual(form.cleaned_data['recaptcha'].get('score'), 0.4)
         self.assertEqual(form.cleaned_data['recaptcha'].get('hostname'), 'localhost')
         self.assertEqual(form.cleaned_data['recaptcha'].get('action'), 'homepage')
+        del os.environ['RECAPTCHA_DISABLE']
 
     @mock.patch('requests.post')
     def test_validate_error_invalid_token(self, requests_post):
